@@ -26,10 +26,7 @@ function Month({year, month, selectedDays, onDayClick}) {
 
     function renderEmptyDay(key) {
         return (
-            <Day
-                key={key}
-                value={''}
-            />
+            <div className='day' key={key} />
         );
     }
 
@@ -59,6 +56,15 @@ function Month({year, month, selectedDays, onDayClick}) {
 
     return (
         <div className='month'>
+            <div className='week'>
+                <div className='day'>Mon</div>
+                <div className='day'>Tue</div>
+                <div className='day'>Wed</div>
+                <div className='day'>Thu</div>
+                <div className='day'>Fri</div>
+                <div className='day'>Sat</div>
+                <div className='day'>Sun</div>
+            </div>
             {weeks}
         </div>
     );
@@ -66,13 +72,12 @@ function Month({year, month, selectedDays, onDayClick}) {
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-function MonthSwitcher({year, month, onPrevMonth, onNextMonth}) {
+function MonthSwitcher({month, onPrevMonth, onNextMonth}) {
     return (
         <div className='month-switcher'>
             <button onClick={onPrevMonth}>{'<'}</button>
-            <span>{MONTH_NAMES[month] + ' ' + year}</span>
+            <span>{MONTH_NAMES[month]}</span>
             <button onClick={onNextMonth}>{'>'}</button>
-            
         </div>
     );
 }
