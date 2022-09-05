@@ -1,0 +1,2 @@
+body{font:14px}#root{display:flex;justify-content:center}.calendar{display:flex;flex-direction:column}.month-switcher,.year-switcher{display:flex;justify-content:space-between}.month{display:flex;flex-direction:column}.week{display:flex;flex-direction:row}.day{float:left;height:34px;width:34px}.day.selected{background-color:cyan}.counters{display:flex;justify-content:space-between}.counters__selected{color:cyan}.counters__unselected{color:#000}
+/*# sourceMappingURL=main.e608f464.css.map*/
