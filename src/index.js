@@ -82,17 +82,24 @@ function MonthSwitcher({month, onPrevMonth, onNextMonth}) {
     );
 }
 
-function YearSwitcher({year, onPrevYear, onNextYear, selectedDays}) {
-    const selectedCount = countSelectedDays();
-    const unselectedCount = daysInYear(year) - selectedCount;
-
+function YearSwitcher({year, onPrevYear, onNextYear}) {
     return (
         <div className='year-switcher'>
             <button onClick={onPrevYear}>{'<'}</button>
             <span>{year}</span>
             <button onClick={onNextYear}>{'>'}</button>
-            <span>{selectedCount}</span>
-            <span>{unselectedCount}</span>
+        </div>
+    );
+}
+
+function Counters({year, selectedDays}) {
+    const selectedCount = countSelectedDays();
+    const unselectedCount = daysInYear(year) - selectedCount;
+
+    return (
+        <div className='counters'>
+            <span className='counters__selected'>{selectedCount}</span>
+            <span className='counters__unselected'>{unselectedCount}</span>
         </div>
     );
 
@@ -120,7 +127,6 @@ function Calendar() {
                 year={year}
                 onPrevYear={() => setYear(year - 1)}
                 onNextYear={() => setYear(year + 1)}
-                selectedDays={selectedDays.get(year)}
             />
             <MonthSwitcher
                 year={year}
@@ -133,6 +139,10 @@ function Calendar() {
                 month={month}
                 selectedDays={selectedDays.get(year)?.get(month)}
                 onDayClick={handleDayClick}
+            />
+            <Counters
+                year={year}
+                selectedDays={selectedDays.get(year)}
             />
         </div>
     );

@@ -18,6 +18,14 @@ body {
     background-color: cyan;
 }
 
+.counters__selected {
+    color: cyan;
+}
+
+.counters__unselected {
+    color: black;
+}
+
 .calendar {
     display: flex;
     flex-direction: column;
