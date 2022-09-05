@@ -2,10 +2,34 @@ body {
     font: 14px;
 }
 
-.week:after {
-    clear: both;
-    content: "";
-    display: table;
+#root {
+    display: flex;
+    justify-content: center;
+}
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+}
+
+.year-switcher {
+    display: flex;
+    justify-content: space-between;
+}
+
+.month-switcher {
+    display: flex;
+    justify-content: space-between;
+}
+
+.month {
+    display: flex;
+    flex-direction: column;
+}
+
+.week {
+    display: flex;
+    flex-direction: row;
 }
 
 .day {
@@ -18,15 +42,15 @@ body {
     background-color: cyan;
 }
 
+.counters {
+    display: flex;
+    justify-content: space-between;
+}
+
 .counters__selected {
     color: cyan;
 }
 
 .counters__unselected {
     color: black;
-}
-
-.calendar {
-    display: flex;
-    flex-direction: column;
 }
