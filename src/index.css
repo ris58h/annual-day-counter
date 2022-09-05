@@ -12,14 +12,13 @@ body {
     flex-direction: column;
 }
 
-.year-switcher {
+.switcher {
     display: flex;
     justify-content: space-between;
 }
 
-.month-switcher {
-    display: flex;
-    justify-content: space-between;
+.switcher > select {
+    width: 100%;
 }
 
 .month {
@@ -40,17 +39,4 @@ body {
 
 .day.selected {
     background-color: cyan;
-}
-
-.counters {
-    display: flex;
-    justify-content: space-between;
-}
-
-.counters__selected {
-    color: cyan;
-}
-
-.counters__unselected {
-    color: black;
 }

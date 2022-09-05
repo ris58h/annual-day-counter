@@ -10,9 +10,9 @@ function Day({value, selected, onClick}) {
     );
 }
 
-function Month({year, month, selectedDays, onDayClick}) {
+function Month({year, month, selectedDaysInMonth, onDayClick}) {
     function renderDay(day, key) {
-        const selected = selectedDays?.has(day);
+        const selected = selectedDaysInMonth?.has(day);
 
         return (
             <Day
@@ -72,44 +72,81 @@ function Month({year, month, selectedDays, onDayClick}) {
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-function MonthSwitcher({month, onPrevMonth, onNextMonth}) {
+function MonthSwitcher({month, selectedDaysInYear, onPrevMonth, onNextMonth, onMonthChange}) {
+    const months = MONTH_NAMES.map((name, index) => {
+        return <option value={index} key={index}>{name} ({countSelectedDays(index)})</option>
+    });
+
     return (
-        <div className='month-switcher'>
+        <div className='switcher'>
             <button onClick={onPrevMonth}>{'<'}</button>
-            <span>{MONTH_NAMES[month]}</span>
+            <select value={month} onChange={handleOnChange}>
+                {months}
+            </select>
             <button onClick={onNextMonth}>{'>'}</button>
         </div>
     );
+
+    function handleOnChange(event) {
+        onMonthChange(parseInt(event.target.value));
+    }
+
+    function countSelectedDays(month) {
+        if (!selectedDaysInYear) {
+            return 0;
+        }
+        const selectedDaysInMonth = selectedDaysInYear.get(month);
+        if (!selectedDaysInMonth) {
+            return 0;
+        } else {
+            return selectedDaysInMonth.size;
+        }
+    }
 }
 
-function YearSwitcher({year, onPrevYear, onNextYear}) {
+const YEAR_GAP = 4;
+
+function YearSwitcher({year, selectedDays, onPrevYear, onNextYear, onYearChange}) {
+    const years = [];
+    const prevPageYear = year - YEAR_GAP - 1;
+    years.push(
+        <option value={prevPageYear} key={prevPageYear}>...</option>
+    );
+    for (let i = year - YEAR_GAP; i <= year + YEAR_GAP; i++) {
+        years.push(
+            <option value={i} key={i}>{i} ({countSelectedDays(i)})</option>
+        );
+    }
+    const nextPageYear = year + YEAR_GAP + 1;
+    years.push(
+        <option value={nextPageYear} key={nextPageYear}>...</option>
+    );
+
     return (
-        <div className='year-switcher'>
+        <div className='switcher'>
             <button onClick={onPrevYear}>{'<'}</button>
-            <span>{year}</span>
+            <select value={year} onChange={handleOnChange}>
+                {years}
+            </select>
             <button onClick={onNextYear}>{'>'}</button>
         </div>
     );
-}
 
-function Counters({year, selectedDays}) {
-    const selectedCount = countSelectedDays();
-    const unselectedCount = daysInYear(year) - selectedCount;
+    function handleOnChange(event) {
+        onYearChange(parseInt(event.target.value));
+    }
 
-    return (
-        <div className='counters'>
-            <span className='counters__selected'>{selectedCount}</span>
-            <span className='counters__unselected'>{unselectedCount}</span>
-        </div>
-    );
-
-    function countSelectedDays() {
+    function countSelectedDays(year) {
         if (!selectedDays) {
             return 0;
         }
+        const selectedDaysInYear = selectedDays.get(year);
+        if (!selectedDaysInYear) {
+            return 0;
+        }
         let res = 0;
-        for (let selectedMonthDays of selectedDays.values()) {
-            res += selectedMonthDays.size;
+        for (let selectedDaysInMonth of selectedDaysInYear.values()) {
+            res += selectedDaysInMonth.size;
         }
         return res;
     }
@@ -125,24 +162,23 @@ function Calendar() {
         <div className='calendar'>
             <YearSwitcher
                 year={year}
+                selectedDays={selectedDays}
                 onPrevYear={() => setYear(year - 1)}
                 onNextYear={() => setYear(year + 1)}
+                onYearChange={setYear}
             />
             <MonthSwitcher
-                year={year}
                 month={month}
+                selectedDaysInYear={selectedDays.get(year)}
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
+                onMonthChange={setMonth}
             />
             <Month
                 year={year}
                 month={month}
-                selectedDays={selectedDays.get(year)?.get(month)}
+                selectedDaysInMonth={selectedDays.get(year)?.get(month)}
                 onDayClick={handleDayClick}
-            />
-            <Counters
-                year={year}
-                selectedDays={selectedDays.get(year)}
             />
         </div>
     );
@@ -184,9 +220,6 @@ function Calendar() {
     }
 }
 
-function daysInYear(year) {
-    return ((year % 4 === 0 && year % 100 > 0) || year %400 === 0) ? 366 : 365;
-}
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
