@@ -38,8 +38,8 @@ function Month({year, month, selectedDaysInMonth, onDayClick}) {
         );
     }
 
-    const daysBefore = ((new Date(year, month).getDay() - 1) + 7) % 7;
-    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysBefore = ((new Date(year, month - 1).getDay() - 1) + 7) % 7;
+    const daysInMonth = new Date(year, month - 1, 0).getDate();
     const weeksInMonth = Math.ceil((daysBefore + daysInMonth) / 7);
     const weeks = [];
     let days = [];
@@ -155,7 +155,7 @@ function YearSwitcher({year, selectedDays, onPrevYear, onNextYear, onYearChange}
 function Calendar() {
     const now = new Date();
     const [year, setYear] = useState(now.getFullYear());
-    const [month, setMonth] = useState(now.getMonth());
+    const [month, setMonth] = useState(now.getMonth() + 1);
     const [selectedDays, setSelectedDays] = useState(new Map());
 
     return (
@@ -202,18 +202,18 @@ function Calendar() {
     }
 
     function handlePrevMonth() {
-        if (month === 0) {
+        if (month === 1) {
             setYear(year - 1);
-            setMonth(11);
+            setMonth(12);
         } else {
             setMonth(month - 1);
         }
     }
 
     function handleNextMonth() {
-        if (month === 11) {
+        if (month === 12) {
             setYear(year + 1);
-            setMonth(0);
+            setMonth(1);
         } else {
             setMonth(month + 1);
         }
