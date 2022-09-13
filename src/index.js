@@ -90,7 +90,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
         setPointedRange({
             from: day,
             to: day,
-            selected: !selectedDaysInMonth.has(day)
+            selected: !selectedDaysInMonth?.has(day)
         });
     }
 
@@ -108,19 +108,6 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
             selected: pointedRange.selected
         });
     }
-
-    // function handlePointerUp(e) {
-    //     //TODO
-    //     const days = [];
-    //     for (let i = Math.min(pointedRange.from, pointedRange.to); i <= Math.max(pointedRange.from, pointedRange.to); i++) {
-    //         days.push(i);
-    //     }
-    //     if (days.length === 0) {
-    //         return;
-    //     }
-    //     setPointedRange({});
-    //     onDaySelection(days, pointedRange.selected);
-    // }
 
     function renderEmptyDay(key) {
         return (
@@ -141,7 +128,8 @@ const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'Ju
 
 function MonthSwitcher({ month, selectedDaysInYear, onPrevMonth, onNextMonth, onMonthChange }) {
     const months = MONTH_NAMES.map((name, index) => {
-        return <option value={index} key={index}>{name} ({countSelectedDays(index)})</option>
+        const monthNumber = index + 1;
+        return <option value={monthNumber} key={monthNumber}>{name} ({countSelectedDays(monthNumber)})</option>
     });
 
     return (
