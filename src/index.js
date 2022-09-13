@@ -1,42 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-function Day({value, selected, onClick}) {
+function Day({ value, selected, onClick }) {
     return (
-        <button className={'day' + (selected ? ' selected' : '')} onClick={onClick}>
+        <button className={'day' + (selected ? ' selected' : '')} data-day={value}>
             {value}
         </button>
     );
 }
 
-function Month({year, month, selectedDaysInMonth, onDayClick}) {
-    function renderDay(day, key) {
-        const selected = selectedDaysInMonth?.has(day);
-
-        return (
-            <Day
-                key={key}
-                value={day}
-                selected={selected}
-                onClick={() => onDayClick(day)}
-            />
-        );
-    }
-
-    function renderEmptyDay(key) {
-        return (
-            <div className='day' key={key} />
-        );
-    }
-
-    function renderWeek(days, key) {
-        return (
-            <div className='week' key={key}>
-                {days}
-            </div>
-        );
-    }
+function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
+    const [pointedRange, setPointedRange] = useState({});
 
     const daysBefore = ((new Date(year, month - 1).getDay() - 1) + 7) % 7;
     const daysInMonth = new Date(year, month - 1, 0).getDate();
@@ -54,6 +29,25 @@ function Month({year, month, selectedDaysInMonth, onDayClick}) {
         }
     }
 
+    useEffect(() => {
+        document.addEventListener('pointerup', handlePointerUp);
+        return () => {
+            document.removeEventListener('pointerup', handlePointerUp);
+        };
+
+        function handlePointerUp() {
+            const days = [];
+            for (let i = Math.min(pointedRange.from, pointedRange.to); i <= Math.max(pointedRange.from, pointedRange.to); i++) {
+                days.push(i);
+            }
+            if (days.length === 0) {
+                return;
+            }
+            setPointedRange({});
+            onDaySelection(days, pointedRange.selected);
+        }
+    }, [onDaySelection, pointedRange]);
+
     return (
         <div className='month'>
             <div className='week'>
@@ -65,14 +59,87 @@ function Month({year, month, selectedDaysInMonth, onDayClick}) {
                 <div className='day'>Sat</div>
                 <div className='day'>Sun</div>
             </div>
-            {weeks}
+            <div
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+            >
+                {weeks}
+            </div>
         </div>
     );
+
+    function renderDay(day, key) {
+        let selected;
+        const inPointedRange = Math.min(pointedRange.from, pointedRange.to) <= day && day <= Math.max(pointedRange.from, pointedRange.to);
+        if (inPointedRange) {
+            selected = pointedRange.selected;
+        } else {
+            selected = selectedDaysInMonth?.has(day);
+        }
+        return (
+            <Day
+                key={key}
+                value={day}
+                selected={selected}
+            />
+        );
+    }
+
+    function handlePointerDown(e) {
+        const day = parseInt(e.target.dataset.day);
+        setPointedRange({
+            from: day,
+            to: day,
+            selected: !selectedDaysInMonth.has(day)
+        });
+    }
+
+    function handlePointerMove(e) {
+        const day = parseInt(e.target.dataset.day);
+        if (!day) {
+            return;
+        }
+        if (pointedRange.to === day) {
+            return;
+        }
+        setPointedRange({
+            from: pointedRange.from,
+            to: day,
+            selected: pointedRange.selected
+        });
+    }
+
+    // function handlePointerUp(e) {
+    //     //TODO
+    //     const days = [];
+    //     for (let i = Math.min(pointedRange.from, pointedRange.to); i <= Math.max(pointedRange.from, pointedRange.to); i++) {
+    //         days.push(i);
+    //     }
+    //     if (days.length === 0) {
+    //         return;
+    //     }
+    //     setPointedRange({});
+    //     onDaySelection(days, pointedRange.selected);
+    // }
+
+    function renderEmptyDay(key) {
+        return (
+            <div className='day' key={key} />
+        );
+    }
+
+    function renderWeek(days, key) {
+        return (
+            <div className='week' key={key}>
+                {days}
+            </div>
+        );
+    }
 }
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-function MonthSwitcher({month, selectedDaysInYear, onPrevMonth, onNextMonth, onMonthChange}) {
+function MonthSwitcher({ month, selectedDaysInYear, onPrevMonth, onNextMonth, onMonthChange }) {
     const months = MONTH_NAMES.map((name, index) => {
         return <option value={index} key={index}>{name} ({countSelectedDays(index)})</option>
     });
@@ -106,7 +173,7 @@ function MonthSwitcher({month, selectedDaysInYear, onPrevMonth, onNextMonth, onM
 
 const YEAR_GAP = 4;
 
-function YearSwitcher({year, selectedDays, onPrevYear, onNextYear, onYearChange}) {
+function YearSwitcher({ year, selectedDays, onPrevYear, onNextYear, onYearChange }) {
     const years = [];
     const prevPageYear = year - YEAR_GAP - 1;
     years.push(
@@ -178,12 +245,12 @@ function Calendar() {
                 year={year}
                 month={month}
                 selectedDaysInMonth={selectedDays.get(year)?.get(month)}
-                onDayClick={handleDayClick}
+                onDaySelection={handleDaySelection}
             />
         </div>
     );
 
-    function handleDayClick(day) {
+    function handleDaySelection(days, selected) {
         const newSelectedDays = new Map(selectedDays);
 
         const yearSelectedDays = new Map(newSelectedDays.get(year));
@@ -192,11 +259,13 @@ function Calendar() {
         const monthSelectedDays = new Set(yearSelectedDays.get(month));
         yearSelectedDays.set(month, monthSelectedDays);
 
-        if (monthSelectedDays.has(day)) {
-            monthSelectedDays.delete(day);
-        } else {
-            monthSelectedDays.add(day);
-        }
+        days.forEach(day => {
+            if (selected) {
+                monthSelectedDays.add(day);
+            } else {
+                monthSelectedDays.delete(day);
+            }
+        });
 
         setSelectedDays(newSelectedDays);
     }
