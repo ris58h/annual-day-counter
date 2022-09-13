@@ -156,7 +156,7 @@ function Calendar() {
     const now = new Date();
     const [year, setYear] = useState(now.getFullYear());
     const [month, setMonth] = useState(now.getMonth() + 1);
-    const [selectedDays, setSelectedDays] = useState(new Map());
+    const [selectedDays, setSelectedDays] = useLocalStorage('selectedDays', new Map(), serializeSelectedDates, deserializeSelectedDates);
 
     return (
         <div className='calendar'>
@@ -218,6 +218,68 @@ function Calendar() {
             setMonth(month + 1);
         }
     }
+}
+
+function useLocalStorage(key, initialValue, serialize = JSON.stringify, deserialize = JSON.parse) {
+    const [storedValue, setStoredValue] = useState(() => {
+        if (typeof window === "undefined") {
+            return initialValue;
+        }
+
+        try {
+            const item = window.localStorage.getItem(key);
+            return item ? deserialize(item) : initialValue;
+        } catch (error) {
+            console.log(error);
+            return initialValue;
+        }
+    });
+
+    const setValue = (value) => {
+        try {
+            // Allow value to be a function so we have same API as useState
+            const valueToStore =
+                value instanceof Function ? value(storedValue) : value;
+            setStoredValue(valueToStore);
+            if (typeof window !== "undefined") {
+                window.localStorage.setItem(key, serialize(valueToStore));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    return [storedValue, setValue];
+}
+
+function serializeSelectedDates(selectedDays) {
+    const res = {};
+    selectedDays.forEach((monthsMap, year) => {
+        const monthsObject = {};
+        monthsMap.forEach((daysSet, month) => {
+            const daysArray = Array.from(daysSet);
+            monthsObject[month] = daysArray;
+        })
+        res[year] = monthsObject;
+    });
+    return JSON.stringify(res);
+}
+
+function deserializeSelectedDates(string) {
+    const object = JSON.parse(string);
+    const res = new Map();
+    for (const [yearString, monthsObject] of Object.entries(object)) {
+        const year = parseInt(yearString);
+        const monthsMap = new Map();
+        for (const [monthString, daysArray] of Object.entries(monthsObject)) {
+            const month = parseInt(monthString);
+            const daysSet = new Set();
+            daysArray.forEach((d) => daysSet.add(d));
+            monthsMap.set(month, daysSet);
+        }
+        res.set(year, monthsMap);
+    }
+    return res;
 }
 
 // ========================================
