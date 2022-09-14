@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-function Day({ value, selected, onClick }) {
+function Day({ value, selected }) {
     return (
         <button className={'day' + (selected ? ' selected' : '')} data-day={value}>
             {value}
@@ -11,7 +11,7 @@ function Day({ value, selected, onClick }) {
 }
 
 function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
-    const [pointedRange, setPointedRange] = useState({});
+    const [pointedRange, setPointedRange] = useState();
 
     const daysBefore = ((new Date(year, month - 1).getDay() - 1) + 7) % 7;
     const daysInMonth = new Date(year, month - 1, 0).getDate();
@@ -29,25 +29,6 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
         }
     }
 
-    useEffect(() => {
-        document.addEventListener('pointerup', handlePointerUp);
-        return () => {
-            document.removeEventListener('pointerup', handlePointerUp);
-        };
-
-        function handlePointerUp() {
-            const days = [];
-            for (let i = Math.min(pointedRange.from, pointedRange.to); i <= Math.max(pointedRange.from, pointedRange.to); i++) {
-                days.push(i);
-            }
-            if (days.length === 0) {
-                return;
-            }
-            setPointedRange({});
-            onDaySelection(days, pointedRange.selected);
-        }
-    }, [onDaySelection, pointedRange]);
-
     return (
         <div className='month'>
             <div className='week'>
@@ -59,9 +40,10 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
                 <div className='day'>Sat</div>
                 <div className='day'>Sun</div>
             </div>
-            <div
+            <div className='weeks'
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
             >
                 {weeks}
             </div>
@@ -70,7 +52,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
 
     function renderDay(day, key) {
         let selected;
-        const inPointedRange = Math.min(pointedRange.from, pointedRange.to) <= day && day <= Math.max(pointedRange.from, pointedRange.to);
+        const inPointedRange = pointedRange && Math.min(pointedRange.from, pointedRange.to) <= day && day <= Math.max(pointedRange.from, pointedRange.to);
         if (inPointedRange) {
             selected = pointedRange.selected;
         } else {
@@ -86,7 +68,12 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
     }
 
     function handlePointerDown(e) {
+        e.currentTarget.setPointerCapture(e.pointerId);
+
         const day = parseInt(e.target.dataset.day);
+        if (!day) {
+            return;
+        }
         setPointedRange({
             from: day,
             to: day,
@@ -95,7 +82,11 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
     }
 
     function handlePointerMove(e) {
-        const day = parseInt(e.target.dataset.day);
+        if (!pointedRange) {
+            return;
+        }
+        var target = document.elementFromPoint(e.clientX, e.clientY);
+        const day = parseInt(target.dataset.day);
         if (!day) {
             return;
         }
@@ -107,6 +98,21 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
             to: day,
             selected: pointedRange.selected
         });
+    }
+
+    function handlePointerUp() {
+        if (!pointedRange) {
+            return;
+        }
+        const days = [];
+        for (let i = Math.min(pointedRange.from, pointedRange.to); i <= Math.max(pointedRange.from, pointedRange.to); i++) {
+            days.push(i);
+        }
+        if (days.length === 0) {
+            return;
+        }
+        setPointedRange();
+        onDaySelection(days, pointedRange.selected);
     }
 
     function renderEmptyDay(key) {

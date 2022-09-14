@@ -26,6 +26,10 @@ body {
     flex-direction: column;
 }
 
+.weeks {
+    touch-action: none;
+}
+
 .week {
     display: flex;
     flex-direction: row;
