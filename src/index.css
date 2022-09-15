@@ -1,7 +1,3 @@
-body {
-    font: 14px;
-}
-
 #root {
     display: flex;
     justify-content: center;
@@ -10,6 +6,10 @@ body {
 .calendar {
     display: flex;
     flex-direction: column;
+
+    width: 100%;
+    max-width: 480px;
+    font-size: 20px;
 }
 
 .switcher {
@@ -17,8 +17,17 @@ body {
     justify-content: space-between;
 }
 
+.switcher > button {
+    font-size: inherit;
+
+    width: 8%;
+    min-width: 24px;
+    aspect-ratio: 1;
+}
+
 .switcher > select {
     width: 100%;
+    font-size: inherit;
 }
 
 .month {
@@ -33,6 +42,8 @@ body {
 .days-of-week {
     display: flex;
     flex-direction: row;
+
+    font-weight: bold;
 }
 
 .week {
@@ -48,6 +59,7 @@ body {
     outline: none;
     border: none;
     cursor: pointer;
+    font-size: inherit;
 }
 
 .day.selected {
@@ -65,8 +77,8 @@ body {
 }
 
 .cell {
-    height: 34px;
-    width: 34px;
+    width: 14.3%;
+    aspect-ratio: 1;
 
     display: flex;
     justify-content: center;
