@@ -54,8 +54,14 @@ body {
     background-color: #aad8e6;
 }
 
-.day:hover, .day.selected:hover, .day.pointed {
+.day.pointed {
     background-color: #e6e6e6;
+}
+
+@media (hover: hover) {
+    .day:hover, .day.selected:hover {
+        background-color: #e6e6e6;
+    }
 }
 
 .cell {
