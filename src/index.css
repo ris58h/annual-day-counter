@@ -17,17 +17,30 @@
     justify-content: space-between;
 }
 
+.switcher:not(:first-child) {
+    margin-top: 8px;
+}
+
 .switcher > button {
     font-size: inherit;
 
     width: 8%;
     min-width: 24px;
     aspect-ratio: 1;
+
+    background-color: white;
+    border: 1px solid black;
+    cursor: pointer;
 }
 
 .switcher > select {
     width: 100%;
     font-size: inherit;
+    margin: 0 8px;
+
+    background-color: white;
+    border: 1px solid black;
+    cursor: pointer;
 }
 
 .month {
@@ -56,7 +69,6 @@
 }
 
 .day {
-    outline: none;
     border: none;
     cursor: pointer;
     font-size: inherit;
