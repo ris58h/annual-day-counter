@@ -1,2 +1,0 @@
-body{font:14px}#root{display:flex;justify-content:center}.calendar{display:flex;flex-direction:column}.switcher{display:flex;justify-content:space-between}.switcher>select{width:100%}.month{display:flex;flex-direction:column}.weeks{touch-action:none}.week{display:flex;flex-direction:row}.day{float:left;height:34px;width:34px}.day.selected{background-color:cyan}
-/*# sourceMappingURL=main.f9e7d8bb.css.map*/
