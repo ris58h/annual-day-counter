@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-function Day({ day, isWeekend, selected, pointed }) {
+function Day({ day, isWeekend, selected, pointed, onClick }) {
     const className = 'cell day' 
         + (isWeekend ? ' weekend' : '') 
         + (selected ? ' selected' : '')
         + (pointed ? ' pointed' : '')
     return (
-        <button className={className} data-day={day}>
+        <button className={className} data-day={day} onClick={onClick}>
             {day}
         </button>
     );
@@ -69,6 +69,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
                 isWeekend={isWeekend}
                 selected={selected}
                 pointed={inPointedRange}
+                onClick={handleDayClick}
             />
         );
     }
@@ -119,6 +120,18 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
         }
         setPointedRange();
         onDaySelection(days, pointedRange.selected);
+    }
+
+    function handleDayClick(e) {
+        const keyboardClick = e.detail === 0;
+        if (!keyboardClick) {
+            return;
+        }
+        const day = parseInt(e.target.dataset.day);
+        if (!day) {
+            return;
+        }
+        onDaySelection([day], !selectedDaysInMonth?.has(day));
     }
 
     function renderEmptyDay(key) {
@@ -299,7 +312,7 @@ function useLocalStorage(key, initialValue, serialize = JSON.stringify, deserial
             const item = window.localStorage.getItem(key);
             return item ? deserialize(item) : initialValue;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return initialValue;
         }
     });
@@ -314,7 +327,7 @@ function useLocalStorage(key, initialValue, serialize = JSON.stringify, deserial
                 window.localStorage.setItem(key, serialize(valueToStore));
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 
