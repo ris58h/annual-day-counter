@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
-function Day({ value, selected }) {
+function Day({ day, isWeekend, selected, pointed }) {
+    const className = 'cell day' 
+        + (isWeekend ? ' weekend' : '') 
+        + (selected ? ' selected' : '')
+        + (pointed ? ' pointed' : '')
     return (
-        <button className={'day' + (selected ? ' selected' : '')} data-day={value}>
-            {value}
+        <button className={className} data-day={day}>
+            {day}
         </button>
     );
 }
@@ -21,7 +25,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
     for (let i = 1; i <= weeksInMonth * 7; i++) {
         const day = (i <= daysBefore || i > daysBefore + daysInMonth)
             ? renderEmptyDay(i)
-            : renderDay(i - daysBefore, i);
+            : renderDay(i - daysBefore, (i % 7 === 6 || i % 7 === 0), i);
         days.push(day);
         if (days.length === 7) {
             weeks.push(renderWeek(days, i));
@@ -31,14 +35,14 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
 
     return (
         <div className='month'>
-            <div className='week'>
-                <div className='day'>Mon</div>
-                <div className='day'>Tue</div>
-                <div className='day'>Wed</div>
-                <div className='day'>Thu</div>
-                <div className='day'>Fri</div>
-                <div className='day'>Sat</div>
-                <div className='day'>Sun</div>
+            <div className='days-of-week'>
+                <div className='cell'>Mon</div>
+                <div className='cell'>Tue</div>
+                <div className='cell'>Wed</div>
+                <div className='cell'>Thu</div>
+                <div className='cell'>Fri</div>
+                <div className='cell weekend'>Sat</div>
+                <div className='cell weekend'>Sun</div>
             </div>
             <div className='weeks'
                 onPointerDown={handlePointerDown}
@@ -50,7 +54,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
         </div>
     );
 
-    function renderDay(day, key) {
+    function renderDay(day, isWeekend, key) {
         let selected;
         const inPointedRange = pointedRange && Math.min(pointedRange.from, pointedRange.to) <= day && day <= Math.max(pointedRange.from, pointedRange.to);
         if (inPointedRange) {
@@ -61,8 +65,10 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
         return (
             <Day
                 key={key}
-                value={day}
+                day={day}
+                isWeekend={isWeekend}
                 selected={selected}
+                pointed={inPointedRange}
             />
         );
     }
@@ -117,7 +123,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
 
     function renderEmptyDay(key) {
         return (
-            <div className='day' key={key} />
+            <div className='cell' key={key} />
         );
     }
 

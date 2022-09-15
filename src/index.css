@@ -30,17 +30,41 @@ body {
     touch-action: none;
 }
 
+.days-of-week {
+    display: flex;
+    flex-direction: row;
+}
+
 .week {
     display: flex;
     flex-direction: row;
 }
 
+.weekend {
+    color: #d10000;
+}
+
 .day {
-    float: left;
-    height: 34px;
-    width: 34px;
+    outline: none;
+    border: none;
+    cursor: pointer;
 }
 
 .day.selected {
-    background-color: cyan;
+    background-color: #aad8e6;
+}
+
+.day:hover, .day.selected:hover, .day.pointed {
+    background-color: #e6e6e6;
+}
+
+.cell {
+    height: 34px;
+    width: 34px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: white;
 }
