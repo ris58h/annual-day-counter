@@ -29,10 +29,45 @@ it("has the right number of days in each month of 2022", () => {
     const monthSelect = selects[1];
 
     userEvent.selectOptions(yearSelect, ["2022"]);
-    daysInMonths2022.forEach((daysInMonth, i) => {
-        userEvent.selectOptions(monthSelect, ["" + (i + 1)]);
+    daysInMonths2022.forEach((daysInMonth, monthIndex) => {
+        userEvent.selectOptions(monthSelect, ["" + (monthIndex + 1)]);
 
         const days = container.querySelectorAll('.cell.day');
-        expect(days.length).toBe(daysInMonth);
+        expect(days).toHaveLength(daysInMonth);
+    })
+});
+
+it("has the right weekends in each month of 2022", () => {
+    const weekendsInMonths2022 = [
+        [1,2, 8,9, 15,16, 22,23, 29,30], // January
+        [5,6, 12,13, 19,20, 26,27],      // February
+        [5,6, 12,13, 19,20, 26,27],      // March
+        [2,3, 9,10, 16,17, 23,24, 30],   // April
+        [1, 7,8, 14,15, 21,22, 28,29],   // May
+        [4,5, 11,12, 18,19, 25,26],      // June
+        [2,3, 9,10, 16,17, 23,24, 30,31],// July
+        [6,7, 13,14, 20,21, 27,28],      // August
+        [3,4, 10,11, 17,18, 24,25],      // September
+        [1,2, 8,9, 15,16, 22,23, 29,30], // October
+        [5,6, 12,13, 19,20, 26,27],      // November
+        [3,4, 10,11, 17,18, 24,25, 31],  // December
+    ];
+
+    const {container} = render(<Calendar />);
+
+    const selects = screen.getAllByRole("combobox");
+    const yearSelect = selects[0];
+    const monthSelect = selects[1];
+
+    userEvent.selectOptions(yearSelect, ["2022"]);
+    weekendsInMonths2022.forEach((weekendsInMonth, monthIndex) => {
+        userEvent.selectOptions(monthSelect, ["" + (monthIndex + 1)]);
+
+        const weekends = container.querySelectorAll('.cell.day.weekend');
+        expect(weekends).toHaveLength(weekendsInMonth.length);
+
+        for (let i = 0; i < weekends.length; i++) {
+            expect(parseInt(weekends[i].textContent)).toBe(weekendsInMonth[i]);    
+        }
     })
 });
