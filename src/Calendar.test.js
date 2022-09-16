@@ -1,42 +1,32 @@
-import React from "react";
-import { render, unmountComponentAtNode } from "react-dom";
+import {render, cleanup, screen} from '@testing-library/react'
 import userEvent from "@testing-library/user-event"; 
-
 import Calendar from "./Calendar";
 
-let container = null;
-beforeEach(() => {
-    container = document.createElement("div");
-    document.body.appendChild(container);
-});
-
-afterEach(() => {
-    unmountComponentAtNode(container);
-    container.remove();
-    container = null;
-});
+afterEach(cleanup);
 
 it("has current year and month selected", () => {
-    render(<Calendar />, container);
+    render(<Calendar />);
 
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
     
-    const yearSelect = container.querySelector(".switcher > select");
-    expect(yearSelect.value).toBe(`${year}`);
+    const selects = screen.getAllByRole("combobox");
+    const yearSelect = selects[0];
+    const monthSelect = selects[1];
 
-    const monthSelect = container.querySelectorAll(".switcher > select")[1]
+    expect(yearSelect.value).toBe(`${year}`);
     expect(monthSelect.value).toBe(`${month}`);
 });
 
 it("has the right number of days in each month of 2022", () => {
     const daysInMonths2022 = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30 ,31];
 
-    render(<Calendar />, container);
+    const {container} = render(<Calendar />);
 
-    const yearSelect = container.querySelector(".switcher > select");
-    const monthSelect = container.querySelectorAll(".switcher > select")[1]
+    const selects = screen.getAllByRole("combobox");
+    const yearSelect = selects[0];
+    const monthSelect = selects[1];
 
     userEvent.selectOptions(yearSelect, ["2022"]);
     daysInMonths2022.forEach((daysInMonth, i) => {
