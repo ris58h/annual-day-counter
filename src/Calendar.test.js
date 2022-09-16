@@ -59,14 +59,7 @@ it("has the right weekends in each month of 2022", () => {
     weekendsInMonths2022.forEach((weekendsInMonth, monthIndex) => {
         userEvent.selectOptions(monthSelect, ["" + (monthIndex + 1)]);
 
-        const days = getAllDays();
-        const weekends = [];
-        for (let i = 0; i < days.length; i++) {
-            const day = days[i];
-            if (day.classList.contains("weekend")) {
-                weekends.push(day);
-            }
-        }
+        const weekends = getAllWeekends();
 
         expect(weekends).toHaveLength(weekendsInMonth.length);
 
@@ -85,4 +78,16 @@ function getSelects() {
 
 function getAllDays() {
     return screen.getAllByRole("button", {name: /(\d+)/i});
+}
+
+function getAllWeekends() {
+    const days = getAllDays();
+    const weekends = [];
+    for (let i = 0; i < days.length; i++) {
+        const day = days[i];
+        if (day.classList.contains("weekend")) {
+            weekends.push(day);
+        }
+    }
+    return weekends;
 }
