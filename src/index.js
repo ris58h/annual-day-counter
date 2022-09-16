@@ -18,7 +18,7 @@ function Month({ year, month, selectedDaysInMonth, onDaySelection }) {
     const [pointedRange, setPointedRange] = useState();
 
     const daysBefore = ((new Date(year, month - 1).getDay() - 1) + 7) % 7;
-    const daysInMonth = new Date(year, month - 1, 0).getDate();
+    const daysInMonth = new Date(year, month, 0).getDate();
     const weeksInMonth = Math.ceil((daysBefore + daysInMonth) / 7);
     const weeks = [];
     let days = [];
