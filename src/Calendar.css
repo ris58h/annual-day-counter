@@ -1,0 +1,112 @@
+.calendar {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 480px;
+    font-size: 20px;
+}
+
+.switcher {
+    display: flex;
+    justify-content: space-between;
+}
+
+.switcher:not(:first-child) {
+    margin-top: 8px;
+}
+
+.switcher > button {
+    font-size: inherit;
+
+    width: 8%;
+    min-width: 24px;
+    aspect-ratio: 1;
+
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.switcher > select {
+    width: 100%;
+    font-size: inherit;
+    margin: 0 8px;
+
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+
+    /* Customize appearance because Safari */
+    appearance: none;
+    padding: 4px;
+    border-radius: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 100% 50%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .switcher > select {
+        background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    }
+}
+
+.month {
+    display: flex;
+    flex-direction: column;
+}
+
+.weeks {
+    touch-action: none;
+}
+
+.days-of-week {
+    display: flex;
+    flex-direction: row;
+
+    font-weight: bold;
+}
+
+.week {
+    display: flex;
+    flex-direction: row;
+}
+
+.day {
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.day.selected {
+    background-color: var(--selected-color);
+}
+
+.day.pointed {
+    background-color: var(--hover-color);
+}
+
+@media (hover: hover) {
+    .day:hover, .day.selected:hover {
+        background-color: var(--hover-color);
+    }
+}
+
+.cell {
+    width: 14.3%;
+    aspect-ratio: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.cell.weekend {
+    color: var(--weekend-color);
+}
