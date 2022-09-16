@@ -228,11 +228,11 @@ function MonthSwitcher({ month, selectedDaysInYear, onPrevMonth, onNextMonth, on
 
     return (
         <div className='switcher'>
-            <button onClick={onPrevMonth}>{'<'}</button>
-            <select value={month} onChange={handleOnChange}>
+            <button onClick={onPrevMonth} aria-label='Previous month'>{'<'}</button>
+            <select value={month} onChange={handleOnChange} aria-label='Month'>
                 {months}
             </select>
-            <button onClick={onNextMonth}>{'>'}</button>
+            <button onClick={onNextMonth} aria-label='Next month'>{'>'}</button>
         </div>
     );
 
@@ -273,11 +273,11 @@ function YearSwitcher({ year, selectedDays, onPrevYear, onNextYear, onYearChange
 
     return (
         <div className='switcher'>
-            <button onClick={onPrevYear}>{'<'}</button>
-            <select value={year} onChange={handleOnChange}>
+            <button onClick={onPrevYear} aria-label='Previous year'>{'<'}</button>
+            <select value={year} onChange={handleOnChange} aria-label='Year'>
                 {years}
             </select>
-            <button onClick={onNextYear}>{'>'}</button>
+            <button onClick={onNextYear} aria-label='Next year'>{'>'}</button>
         </div>
     );
 
