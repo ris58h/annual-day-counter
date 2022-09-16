@@ -22,17 +22,15 @@ it("has current year and month selected", () => {
 it("has the right number of days in each month of 2022", () => {
     const daysInMonths2022 = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30 ,31];
 
-    const {container} = render(<Calendar />);
+    render(<Calendar />);
 
-    const selects = screen.getAllByRole("combobox");
-    const yearSelect = selects[0];
-    const monthSelect = selects[1];
+    const { yearSelect, monthSelect } = getSelects();
 
     userEvent.selectOptions(yearSelect, ["2022"]);
     daysInMonths2022.forEach((daysInMonth, monthIndex) => {
         userEvent.selectOptions(monthSelect, ["" + (monthIndex + 1)]);
 
-        const days = container.querySelectorAll('.cell.day');
+        const days = getAllDays();
         expect(days).toHaveLength(daysInMonth);
     })
 });
@@ -53,17 +51,23 @@ it("has the right weekends in each month of 2022", () => {
         [3,4, 10,11, 17,18, 24,25, 31],  // December
     ];
 
-    const {container} = render(<Calendar />);
+    render(<Calendar />);
 
-    const selects = screen.getAllByRole("combobox");
-    const yearSelect = selects[0];
-    const monthSelect = selects[1];
+    const { yearSelect, monthSelect } = getSelects();
 
     userEvent.selectOptions(yearSelect, ["2022"]);
     weekendsInMonths2022.forEach((weekendsInMonth, monthIndex) => {
         userEvent.selectOptions(monthSelect, ["" + (monthIndex + 1)]);
 
-        const weekends = container.querySelectorAll('.cell.day.weekend');
+        const days = getAllDays();
+        const weekends = [];
+        for (let i = 0; i < days.length; i++) {
+            const day = days[i];
+            if (day.classList.contains("weekend")) {
+                weekends.push(day);
+            }
+        }
+
         expect(weekends).toHaveLength(weekendsInMonth.length);
 
         for (let i = 0; i < weekends.length; i++) {
@@ -71,3 +75,14 @@ it("has the right weekends in each month of 2022", () => {
         }
     })
 });
+
+function getSelects() {
+    const selects = screen.getAllByRole("combobox");
+    const yearSelect = selects[0];
+    const monthSelect = selects[1];
+    return { yearSelect, monthSelect };
+}
+
+function getAllDays() {
+    return screen.getAllByRole("button", {name: /(\d+)/i});
+}
