@@ -20,14 +20,10 @@
 
 body {
     background-color: var(--bg-color);
+    margin: 0;
 }
 
 button {
     /* Safari */
     margin: 0;
-}
-
-#root {
-    display: flex;
-    justify-content: center;
 }

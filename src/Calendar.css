@@ -1,8 +1,7 @@
 .calendar {
-    display: flex;
-    flex-direction: column;
-
-    width: 100%;
+    margin: auto;
+    padding: 8px;
+    min-width: 224px;
     max-width: 480px;
     font-size: 20px;
 }
