@@ -12,8 +12,8 @@ export default function Calendar() {
             <YearSwitcher
                 year={year}
                 selectedDays={selectedDays}
-                onPrevYear={() => setYear(year - 1)}
-                onNextYear={() => setYear(year + 1)}
+                onPrevYear={handlePrevYear}
+                onNextYear={handleNextYear}
                 onYearChange={setYear}
             />
             <MonthSwitcher
@@ -68,6 +68,14 @@ export default function Calendar() {
         } else {
             setMonth(month + 1);
         }
+    }
+
+    function handleNextYear() {
+        setYear((year) => year + 1);
+    }
+
+    function handlePrevYear() {
+        setYear((year) => year - 1);
     }
 }
 
